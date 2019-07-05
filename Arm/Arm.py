@@ -1,12 +1,31 @@
 import numpy as np
 class Arm:
-    def __init__(self, idx, mu, law="Bernoulli"):
+    def __init__(self,
+                idx,
+                mu,
+                draws_in_advance=None,
+                law="Bernoulli"):
         self.idx = idx
         self.mu = mu
         self.law = law
+        self.draws_in_advance = draws_in_advance
+        self.mu_hat = 0
+        self.mu_hat_history = []
+        self.nb_times_drawn = 0
 
-    def draw():
+    def draw(self, t):
+        if self.draws_in_advance != None:
+            reward = self.draws_in_advance[t]
+
+        elif law == 'Bernoulli':
+            reward = np.random(0, self.mu)
+        self.mu_hat =
+        self.mu_hat_history.append(self.mu_hat)
+        self.nb_times_drawn += 1
+
+
         return reward
+
 
 
 

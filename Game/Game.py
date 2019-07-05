@@ -5,18 +5,13 @@ class Game:
     def __init__(self,
                 environment,
                 policy,
-                draws_in_advance,
                 horizon=20000):
         # game settings
         self.env = environment
         self.opt_arm = environment.opt_arm
-        self.draws_in_advance = draws_in_advance
-
 
         self.policy = policy
         self.horizon = horizon
-
-
 
         # history
         self.arm_drawn_history = []
@@ -26,7 +21,9 @@ class Game:
     def playGame(self):
         t = 1
         while t <= horizon:
-            arm_t, reward_t, leader_t = self.policy.playArm(self.env, self.mu_hat_history, t)
+            arm_t, reward_t, leader_t = self.policy.playArm(self.env,
+                                                            self.mu_hat_history,
+                                                            t)
             regret_t = self.opt_arm.mu - arm_t.mu
 
 
