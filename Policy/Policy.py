@@ -4,5 +4,8 @@ class Policy:
         self.isRank1Policy = False
 
 
-    def playArm(game, t):
+    def playArm(env,
+                mu_hat_history,
+                t):
+
         return arm, reward

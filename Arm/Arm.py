@@ -5,6 +5,10 @@ class Arm:
         self.mu = mu
         self.law = law
 
+    def draw():
+        return reward
+
+
 
 class PairArm(Arm):
     def __init__(self, idx, mu, idx_row, idx_col, law="Bernoulli"):
