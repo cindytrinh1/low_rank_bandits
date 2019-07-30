@@ -15,9 +15,9 @@ class UCB(Policy):
         		UCB_indexes.append((cur_arm,
         							UCB1_idx(cur_arm, t)))
         	arm_t = tools.best_arm(UCB_indexes)
-        reward = arm_t.draw(t)
+        reward_t = arm_t.draw(t)
         
-        return arm_t, reward
+        return arm_t, reward_t
         	
        
     def UCB1_idx(self,

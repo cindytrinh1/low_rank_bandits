@@ -21,5 +21,24 @@ class UnimodalGame(Game):
         self.leader_history = []
 
 
-    def plot_leader():
-        pass
+    def playGame(self):
+        t = 1
+        while t <= horizon:
+            arm_t, reward_t, leader_t = self.policy.playArm(self.env,
+                                                            self.mu_hat_history,
+                                                            t)
+            regret_t += self.opt_arm.mu - arm_t.mu
+
+
+            arm_drawn_history.append(arm_t)
+            regret_history.append(regret_t)
+            leader_history.append(leader_t)
+
+
+
+    def plot_and_save(self,
+                      output_dir,
+                      show_regret=True,
+                      show_leader=True,
+                      show_arm=True):
+    ## plot leader

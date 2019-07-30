@@ -1,24 +1,83 @@
+import sys
+sys.path.append("/home/cindy/Documents/memoire/code_git/")
 import numpy as np
+from .UnimodalEnvironment import UnimodalEnvironment
+from Arm import PairArm
+def create_rank1env(mu_row, mu_col, draws_in_advance):
+    """
+    draws_in_advance = list of nb_arms lists of length horizon
+    """
+    nb_row = len(mu_row)
+    nb_col = len(mu_col)
+
+    mu_matrix = np.dot(mu_row.reshape(nb_row,1), mu_col.reshape(1, nb_col))
+    mu_flat = mu_matrix.flatten()
+
+    list_of_pair_arms = []
+    for cur_idx_flat, cur_mu in enumerate(mu_flat):
+        cur_idx_pair = np.unravel_index(cur_idx_flat, mu_matrix.shape)
+        cur_draws_in_advance = draws_in_advance[cur_idx_flat]
+        cur_arm = PairArm(mu=cur_mu,
+                          draws_in_advance=cur_draws_in_advance)
+        cur_arm.idx = cur_idx_flat
+        cur_arm.set_idx_pair(cur_idx_pair)
+        list_of_pair_arms.append(cur_arm)
+
+    rank1env = Rank1Env(mu_row = mu_row,
+                        mu_col = mu_col,
+                        mu_matrix = mu_matrix,
+                        mu_flat = mu_flat,
+                        list_of_pair_arms = list_of_pair_arms)
+    return rank1env
+
 class Rank1Env(UnimodalEnvironment):
-    def __init__(self, mu_row, mu_col):
+    def __init__(self,
+                 mu_row,
+                 mu_col,
+                 mu_matrix,
+                 mu_flat,
+                 list_of_pair_arms):
         self.mu_row = mu_row # list of row means ("u")
         self.nb_row = len(mu_row)
         self.mu_col = mu_col # "v"
         self.nb_col = len(mu_col)
-        self.mu_matrix = np.dot(self.mu_row.reshape(self.nb_row,1),self.mu_col.reshape(1,self.nb_col))
-        self.mu_flat = self.mu_matrix.flatten()
-        ## Create list_of_pair_arms
+
+        self.mu_matrix = mu_matrix
+        self.mu_flat = mu_flat
+
         super().__init__(list_of_pair_arms)
 
         ## Create self.matrix_arms?
 
 
+    def get_arm_idx(self, idx):
+    	# for cur_arm in list_of_arms:
+    	# 	if cur_arm.idx == idx:
+    	# 		arm = cur_arm
 
-    def get
+        if type(idx) == tuple:
+            idx = np.ravel_multi_index(idx, self.mu_matrix.shape)
+        return self.list_of_arms[idx]
 
 
 
-    def getNeighbors(arm,
+
+    def set_neighbors(arm,
                     arm_included=True):
         list_of_neighbors = []
-        return list_of_neighbors
+        (arm_row, arm_col) = arm.idx_pair
+
+        for row in range(nb_row):
+            if row != arm_row:
+                list_of_neighbors.append(self.get_arm_idx((row, arm_col)))
+
+        for col in range(nb_col):
+            if col != arm_col:
+                list_of_neighbors.append(self.get_arm_idx(col, arm_row))
+
+        if arm_included:
+            list_of_neighbors.append(arm)
+
+
+        arm.neighbors = list_of_neighbors
+        #return list_of_neighbors

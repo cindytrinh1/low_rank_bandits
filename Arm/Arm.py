@@ -1,17 +1,17 @@
 import numpy as np
 class Arm:
     def __init__(self,
-                idx,
                 mu,
                 draws_in_advance=None,
                 law="Bernoulli"):
-        self.idx = idx
+        self.idx = None # index is set only when we define the environment
         self.mu = mu
         self.law = law
         self.draws_in_advance = draws_in_advance
         self.mu_hat = 0
         self.mu_hat_history = []
         self.nb_times_drawn = 0
+        self.neighbors = None
 
     def draw(self, t):
         if self.draws_in_advance != None:
@@ -19,18 +19,35 @@ class Arm:
 
         elif law == 'Bernoulli':
             reward = np.random(0, self.mu)
-        self.mu_hat =
+        self.mu_hat = (self.mu_hat * self.nb_times_drawn + reward) / (self.nb_times_drawn + 1)
         self.mu_hat_history.append(self.mu_hat)
         self.nb_times_drawn += 1
 
 
         return reward
 
+    def set_idx(self,idx):
+        self.idx = idx
+
 
 
 
 class PairArm(Arm):
-    def __init__(self, idx, mu, idx_row, idx_col, law="Bernoulli"):
-        super().__init__(idx, mu, law)
-        self.idx_row = idx_row
-        self.idx_col = idx_col
+    def __init__(self,
+                mu,
+                draws_in_advance=None,
+                law="Bernoulli"):
+        super().__init__(mu=mu,
+                         draws_in_advance=draws_in_advance,
+                         law=law)
+
+        self.idx_pair = None
+        self.idx_row = None
+        self.idx_col = None
+
+
+
+    def set_idx_pair(self,idx_pair):
+        self.idx_pair = idx_pair
+        self.idx_row = idx_pair[0]
+        self.idx_col = idx_pair[1]
