@@ -1,8 +1,9 @@
 import sys
-sys.path.append("/home/cindy/Documents/memoire/code_git/")
+#sys.path.append("/home/cindy/Documents/memoire/code_git/")
+
 import numpy as np
 from .UnimodalEnvironment import UnimodalEnvironment
-from Arm import PairArm
+from Arm.Arm import PairArm
 def create_rank1env(mu_row, mu_col, draws_in_advance):
     """
     draws_in_advance = list of nb_arms lists of length horizon
