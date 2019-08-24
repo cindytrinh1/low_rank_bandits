@@ -18,11 +18,17 @@ class Game:
         self.regret_history = []
 
     def playGame(self):
+<<<<<<< HEAD:Games/Game.py
         t = 0
         while t <= horizon - 1:
             arm_t, reward_t = self.policy.playArm(self.env,
                                                             self.mu_hat_history,
                                                             t)
+=======
+        t = 1
+        while t <= self.horizon:
+            arm_t, reward_t = self.policy.playArm(self.env, t)
+>>>>>>> 5f951a5ba1624e28032593e4b9284d19f4f2d68d:Game/Game.py
             regret_t += self.opt_arm.mu - arm_t.mu
 
 

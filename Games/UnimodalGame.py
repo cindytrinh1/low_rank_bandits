@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+from .Game import Game
 class UnimodalGame(Game):
     def __init__(self,
                 environment,
@@ -25,7 +25,6 @@ class UnimodalGame(Game):
         t = 1
         while t <= horizon:
             arm_t, reward_t, leader_t = self.policy.playArm(self.env,
-                                                            self.mu_hat_history,
                                                             t)
             regret_t += self.opt_arm.mu - arm_t.mu
 
@@ -36,9 +35,9 @@ class UnimodalGame(Game):
 
 
 
-    def plot_and_save(self,
-                      output_dir,
-                      show_regret=True,
-                      show_leader=True,
-                      show_arm=True):
-    ## plot leader
+    # def plot_and_save(self,
+    #                   output_dir,
+    #                   show_regret=True,
+    #                   show_leader=True,
+    #                   show_arm=True):
+    # ## plot leader
