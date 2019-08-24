@@ -18,8 +18,8 @@ class Game:
         self.regret_history = []
 
     def playGame(self):
-        t = 1
-        while t <= horizon:
+        t = 0
+        while t <= horizon - 1:
             arm_t, reward_t = self.policy.playArm(self.env,
                                                             self.mu_hat_history,
                                                             t)
@@ -57,4 +57,4 @@ class Game:
                 mu_hat_matrix[i,:] = cur_arm.mu_hat_history
             plt.imshow(mu_hat_matrix)
             plt.title("Mu hat history")
-            plt.savefig(os.path.join(output_dir,"mu_hat_history.jpg"))   
+            plt.savefig(os.path.join(output_dir,"mu_hat_history.jpg"))

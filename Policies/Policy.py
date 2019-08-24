@@ -3,9 +3,5 @@ class Policy:
         self.isUnimodalPolicy = False
         self.isRank1Policy = False
 
-
-    def playArm(env,
-                mu_hat_history,
-                t):
-
-        return arm, reward
+    def PlayArm(self):
+        pass

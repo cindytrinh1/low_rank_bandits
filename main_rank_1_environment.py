@@ -2,9 +2,10 @@ import numpy as np
 import Arm
 import Environment as env
 from Environment import Rank1Env as r1e
-import Game as g
+import Game.Game as g
 import Policy as p
-import tools as t
+import Policy.OSUB as testOSUB
+import tools.tools as t
 import argparse
 import matplotlib.pyplot as plt
 
@@ -27,6 +28,6 @@ if __name__ == "__main__":
     my_rank1_env = r1e.create_rank1env(mu_row,mu_col, draws_in_advance)
 
     ## Launch game
-    my_policy = p.OSUB(draw_leader_every=5)
+    my_policy = testOSUB.OSUB(draw_leader_every=5)
     osub_game = g.Game(my_rank1_env, my_policy, horizon)
     osub_game.playGame()

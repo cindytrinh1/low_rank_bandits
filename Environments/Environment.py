@@ -1,3 +1,9 @@
+
+import sys
+##sys.path.append("/home/cindy/Documents/memoire/code_git/")
+sys.path.append("../")
+import numpy as np
+from Arms.Arm import PairArm
 class Environment:
     def __init__(self, list_of_arms):
         self.list_of_arms = list_of_arms

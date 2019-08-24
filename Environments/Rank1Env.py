@@ -1,8 +1,11 @@
 import sys
-sys.path.append("/home/cindy/Documents/memoire/code_git/")
+##sys.path.append("/home/cindy/Documents/memoire/code_git/")
+sys.path.append("../")
 import numpy as np
-from .UnimodalEnvironment import UnimodalEnvironment
-from Arm import PairArm
+from Arms.Arm import PairArm
+from Environments.UnimodalEnvironment import UnimodalEnvironment
+
+
 def create_rank1env(mu_row, mu_col, draws_in_advance):
     """
     draws_in_advance = list of nb_arms lists of length horizon
@@ -51,10 +54,6 @@ class Rank1Env(UnimodalEnvironment):
 
 
     def get_arm_idx(self, idx):
-    	# for cur_arm in list_of_arms:
-    	# 	if cur_arm.idx == idx:
-    	# 		arm = cur_arm
-
         if type(idx) == tuple:
             idx = np.ravel_multi_index(idx, self.mu_matrix.shape)
         return self.list_of_arms[idx]
@@ -62,22 +61,22 @@ class Rank1Env(UnimodalEnvironment):
 
 
 
-    def set_neighbors(arm,
+    def set_neighbors(self, arm,
                     arm_included=True):
         list_of_neighbors = []
+
         (arm_row, arm_col) = arm.idx_pair
 
-        for row in range(nb_row):
+        for row in range(self.nb_row):
             if row != arm_row:
-                list_of_neighbors.append(self.get_arm_idx((row, arm_col)))
+                list_of_neighbors.append(self.get_arm_idx(idx=(row, arm_col)))
 
-        for col in range(nb_col):
+        for col in range(self.nb_col):
             if col != arm_col:
-                list_of_neighbors.append(self.get_arm_idx(col, arm_row))
+                list_of_neighbors.append(self.get_arm_idx(idx=(col, arm_row)))
 
         if arm_included:
             list_of_neighbors.append(arm)
 
 
         arm.neighbors = list_of_neighbors
-        #return list_of_neighbors

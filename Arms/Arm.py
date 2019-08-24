@@ -14,16 +14,24 @@ class Arm:
         self.neighbors = None
 
     def draw(self, t):
-        if self.draws_in_advance != None:
+        if self.draws_in_advance is not None:
+            assert t < self.draws_in_advance.shape[0]
             reward = self.draws_in_advance[t]
 
-        elif law == 'Bernoulli':
-            reward = np.random(0, self.mu)
+        elif self.law == 'Bernoulli':
+            reward = np.random.binomial(1, self.mu)
+
         self.mu_hat = (self.mu_hat * self.nb_times_drawn + reward) / (self.nb_times_drawn + 1)
+
+        while len(self.mu_hat_history) < t :
+            if self.nb_times_drawn > 0:
+                self.mu_hat_history.append(self.mu_hat_history[-1])
+            else:
+                self.mu_hat_history.append(None)
         self.mu_hat_history.append(self.mu_hat)
         self.nb_times_drawn += 1
 
-
+        assert len(self.mu_hat_history) == t + 1
         return reward
 
     def set_idx(self,idx):
