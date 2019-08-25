@@ -7,6 +7,8 @@ import numpy as np
 from Policies.OSUB import OSUB
 import Environments.Rank1Env as r1e
 import pickle as p
+from Arms import Arm
+import tools
 
 class TestPolicy(unittest.TestCase):
     def test_OSUB(self):
@@ -19,8 +21,19 @@ class TestPolicy(unittest.TestCase):
 
         my_policy = OSUB(draw_leader_every=3)
         for t in range(my_rank1_env.nb_arms):
-            my_policy.playArm(my_rank1_env, t)
+            arm_t, reward_t, leader_t = my_policy.playArm(my_rank1_env, t)
+            self.assertIsInstance(arm_t, Arm.PairArm)
+            self.assertEqual(arm_t.idx, t)
+            self.assertTrue(reward_t == 0 or reward_t == 1)
 
+
+
+        for t in range(my_rank1_env.nb_arms , 100):
+            arm_t, reward_t, leader_t = my_policy.playArm(my_rank1_env, t)
+            self.assertIsInstance(arm_t, Arm.PairArm)
+            self.assertIsInstance(leader_t, Arm.PairArm)
+            self.assertIsNotNone(leader_t.neighbors)
+            self.assertTrue(reward_t == 0 or reward_t == 1)
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,10 +12,11 @@ def best_arm(list_arm_idx):
       reverse=True)
     optimal = True
     list_best_arms = [sorted_tuple[0][0]] # First arm of sorted tuple
-    i = 0
+    i = 1
     while optimal and i < len(sorted_tuple):
         if sorted_tuple[i][1] == sorted_tuple[0][1]:
             list_best_arms.append(sorted_tuple[i][0])
         else:
             optimal = False
+        i += 1
     return random.choice(list_best_arms)

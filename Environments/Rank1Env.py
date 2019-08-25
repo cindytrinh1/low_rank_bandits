@@ -1,5 +1,4 @@
 import sys
-<<<<<<< HEAD:Environments/Rank1Env.py
 ##sys.path.append("/home/cindy/Documents/memoire/code_git/")
 sys.path.append("../")
 import numpy as np
@@ -7,13 +6,7 @@ from Arms.Arm import PairArm
 from Environments.UnimodalEnvironment import UnimodalEnvironment
 
 
-=======
-#sys.path.append("/home/cindy/Documents/memoire/code_git/")
 
-import numpy as np
-from .UnimodalEnvironment import UnimodalEnvironment
-from Arm.Arm import PairArm
->>>>>>> 5f951a5ba1624e28032593e4b9284d19f4f2d68d:Environment/Rank1Env.py
 def create_rank1env(mu_row, mu_col, draws_in_advance):
     """
     draws_in_advance = list of nb_arms lists of length horizon
@@ -63,6 +56,7 @@ class Rank1Env(UnimodalEnvironment):
 
     def get_arm_idx(self, idx):
         if type(idx) == tuple:
+            print(idx, self.mu_matrix.shape)
             idx = np.ravel_multi_index(idx, self.mu_matrix.shape)
         return self.list_of_arms[idx]
 

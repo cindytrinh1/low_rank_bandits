@@ -4,6 +4,7 @@ sys.path.append("../")
 import numpy as np
 from Policies.Policy import Policy
 from Environments.UnimodalEnvironment import UnimodalEnvironment
+from tools import tools
 
 class OSUB(Policy):
 	def __init__(self, draw_leader_every):
@@ -23,8 +24,9 @@ class OSUB(Policy):
 		else:
 			list_arm_mu_hat = [(arm, arm.mu_hat) for arm in env.list_of_arms]
 			leader_t = tools.best_arm(list_arm_mu_hat)
-
-
+			print(f"idx_pair {leader_t.idx_pair}")
+			assert 0 <= leader_t.idx_pair[0] < env.nb_row
+			assert 0 <= leader_t.idx_pair[1] < env.nb_col
 			if leader_t.nb_times_drawn%self.draw_leader_every == 0:
 				arm_t = leader_t
 
@@ -34,10 +36,10 @@ class OSUB(Policy):
 
 				UCB_neighbors_idx = []
 				for cur_neighbor_arm in leader_t.neighbors:
-					UCB_neighbors_idx.append(cur_neighbor_arm,UCB1_idx(cur_arm, t))
+					UCB_neighbors_idx.append((cur_neighbor_arm, self.UCB1_idx(cur_neighbor_arm, t)))
 				arm_t = tools.best_arm(UCB_neighbors_idx)
 
-		print("Draw arm of idx " + str(arm_t.idx))
+
 		reward_t = arm_t.draw(t)
 		return arm_t, reward_t, leader_t
 
