@@ -1,29 +1,28 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from .Game import Game
+import sys
+sys.path.append("..")
+from Games.Game import Game
 class UnimodalGame(Game):
     def __init__(self,
                 environment,
                 policy,
-                draws_in_advance,
                 horizon=20000):
 
         super().__init__(self,
                         environment,
                         policy,
-                        draws_in_advance,
-                        horizon=20000)
+                        horizon)
 
         assert self.environment.isinstanceof(UnimodalEnvironment)
         assert self.policy.isUnimodalPolicy
-
 
         self.leader_history = []
 
 
     def playGame(self):
-        t = 1
-        while t <= horizon:
+        t = 0
+        while t < horizon:
             arm_t, reward_t, leader_t = self.policy.playArm(self.env,
                                                             t)
             regret_t += self.opt_arm.mu - arm_t.mu
@@ -32,6 +31,9 @@ class UnimodalGame(Game):
             arm_drawn_history.append(arm_t)
             regret_history.append(regret_t)
             leader_history.append(leader_t)
+        print(arm_drawn_history)
+        print(regret_history)
+        print(leader_history)
 
 
 

@@ -34,6 +34,9 @@ class TestEnvironment(unittest.TestCase):
             list_idx_arms.add(cur_arm.idx)
         self.assertEqual(len(list_idx_arms), my_rank1_env.nb_arms)
 
+        # Check optimal arm
+        self.assertTrue(my_rank1_env.opt_arm.mu == mu_row[-1]*mu_col[-1])
+
     def test_get_arm_idx(self):
         mu_row = np.linspace(0.1, 0.5, 5)
         mu_col = np.linspace(0.1, 0.3, 3)
@@ -82,35 +85,32 @@ class TestEnvironment(unittest.TestCase):
         draws_in_advance = draws_dict['draws_in_advance']
         my_rank1_env = r1e.create_rank1env(mu_row, mu_col, draws_in_advance)
 
-        list_idx_arms = set()
-        for cur_arm in my_rank1_env.list_of_arms:
-            self.assertTrue(0 <= cur_arm.idx < my_rank1_env.nb_arms)
-            list_idx_arms.add(cur_arm.idx)
-        self.assertEqual(len(list_idx_arms), my_rank1_env.nb_arms)
 
         idx_0 = (0, 0)
         arm_0 = my_rank1_env.get_arm_idx(idx_0)
         my_rank1_env.set_neighbors(arm=arm_0)
-        neighbors_0_mu = []
-        for j, mu_j in enumerate(mu_col):
-            neighbors_0_mu.append(0.1*mu_j)
-        for i, mu_i in enumerate(mu_row):
-            neighbors_0_mu.append(mu_i*0.1)
+        neighbors_0_idx = set()
+        for j in range(my_rank1_env.nb_row):
+            neighbors_0_idx.add((j, arm_0.idx_pair[1]))
+        for j in range(my_rank1_env.nb_col):
+            neighbors_0_idx.add((arm_0.idx_pair[0], j))
         for cur_neighbor in arm_0.neighbors:
-            self.assertTrue(cur_neighbor.mu in neighbors_0_mu)
+            self.assertTrue(cur_neighbor.idx_pair in neighbors_0_idx)
+        self.assertEqual(len(arm_0.neighbors), nb_row + nb_col - 1)
 
-        idx_8 = 8
-        arm_8 = my_rank1_env.get_arm_idx(idx_8)
-        my_rank1_env.set_neighbors(arm=arm_8)
-        neighbors_8_mu = []
-        for j, mu_j in enumerate(mu_col):
-            neighbors_8_mu.append(0.3*mu_j)
-        for i, mu_i in enumerate(mu_row):
-            neighbors_8_mu.append(mu_i*0.3)
-        for cur_neighbor in arm_8.neighbors:
-            self.assertTrue(cur_neighbor.mu in neighbors_8_mu)
 
-        self.assertEqual(len(arm_8.neighbors), nb_row + nb_col - 1)
+        idx_0 = (2, 2)
+        arm_0 = my_rank1_env.get_arm_idx(idx_0)
+        my_rank1_env.set_neighbors(arm=arm_0)
+        neighbors_0_idx = set()
+        for j in range(my_rank1_env.nb_row):
+            neighbors_0_idx.add((j, arm_0.idx_pair[1]))
+        for j in range(my_rank1_env.nb_col):
+            neighbors_0_idx.add((arm_0.idx_pair[0], j))
+        for cur_neighbor in arm_0.neighbors:
+            self.assertTrue(cur_neighbor.idx_pair in neighbors_0_idx)
+
+        self.assertEqual(len(arm_0.neighbors), nb_row + nb_col - 1)
 
 
 

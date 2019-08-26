@@ -24,9 +24,8 @@ class OSUB(Policy):
 		else:
 			list_arm_mu_hat = [(arm, arm.mu_hat) for arm in env.list_of_arms]
 			leader_t = tools.best_arm(list_arm_mu_hat)
-			print(f"idx_pair {leader_t.idx_pair}")
-			assert 0 <= leader_t.idx_pair[0] < env.nb_row
-			assert 0 <= leader_t.idx_pair[1] < env.nb_col
+			
+
 			if leader_t.nb_times_drawn%self.draw_leader_every == 0:
 				arm_t = leader_t
 
@@ -41,6 +40,7 @@ class OSUB(Policy):
 
 
 		reward_t = arm_t.draw(t)
+
 		return arm_t, reward_t, leader_t
 
 

@@ -2,6 +2,10 @@ import unittest
 import numpy as np
 import pickle as p
 import utils_draws as ud
+import sys
+sys.path.append("..")
+from Environments import Rank1Env as r1e
+
 
 class TestGame(unittest.TestCase):
     def test_draws_single(self):
@@ -42,6 +46,9 @@ class TestGame(unittest.TestCase):
         diff_mu = np.abs(mean_draws - mu_flat)
         self.assertTrue((diff_mu<=0.02).all())
         self.assertTrue((diff_mu>0).all())
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -56,7 +56,6 @@ class Rank1Env(UnimodalEnvironment):
 
     def get_arm_idx(self, idx):
         if type(idx) == tuple:
-            print(idx, self.mu_matrix.shape)
             idx = np.ravel_multi_index(idx, self.mu_matrix.shape)
         return self.list_of_arms[idx]
 
@@ -65,20 +64,20 @@ class Rank1Env(UnimodalEnvironment):
 
     def set_neighbors(self, arm,
                     arm_included=True):
-        list_of_neighbors = []
+        list_of_neighbors = set()
 
         (arm_row, arm_col) = arm.idx_pair
 
         for row in range(self.nb_row):
             if row != arm_row:
-                list_of_neighbors.append(self.get_arm_idx(idx=(row, arm_col)))
+                list_of_neighbors.add(self.get_arm_idx(idx=(row, arm_col)))
 
         for col in range(self.nb_col):
             if col != arm_col:
-                list_of_neighbors.append(self.get_arm_idx(idx=(col, arm_row)))
+                list_of_neighbors.add(self.get_arm_idx(idx=(arm_row, col)))
 
         if arm_included:
-            list_of_neighbors.append(arm)
+            list_of_neighbors.add(arm)
 
 
         arm.neighbors = list_of_neighbors
