@@ -36,7 +36,16 @@ def pair_arm_draw(mu_row,
     total_pair_arms = nb_row * nb_col
     mu_matrix = np.dot(mu_row.reshape(nb_row,1), mu_col.reshape(1, nb_col))
     mu_flat = mu_matrix.flatten()
-    return single_arm_draw(mu_flat, horizon, output_pickle, law, plot)
+    draws_dict = single_arm_draw(mu=mu_flat,
+                                 horizon=horizon,
+                                 output_pickle=None,
+                                 law=law,
+                                 plot=plot)
+    draws_dict['mu_row'] = mu_row
+    draws_dict['mu_col'] = mu_col
+    if output_pickle:
+        pickle.dump(draws_dict, open(output_pickle, 'wb'))
+    return draws_dict
 
 
 

@@ -1,6 +1,8 @@
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle as p
+import os
 
 
 from Games import utils_draws as ud
@@ -8,44 +10,66 @@ from Games import UnimodalGame as ug
 
 from Environments import Rank1Env as r1e
 from Policies import OSUB
+from Policies import UTS
+
+
 
 if __name__ == "__main__":
     ## Parameters
-    output_dir = "./results"
+    draws_dir = "./results/draws"
+    horizon = 10000
+    nb_row = 3
+    nb_col = 3
+    results_dir = f"./results/pair_row-{nb_row}_col-{nb_col}_horizon-{horizon}"
+    if not os.path.exists(results_dir):
+        os.mkdir(results_dir)
 
-    horizon = 500
-    nb_row = 5
-    nb_col = 5
-    mu_row = np.linspace(0.1, 0.9, nb_row)
-    mu_col = np.linspace(0.1, 0.9, nb_col)
-
-
-    ## Draws in advance
-
-    draws_dict = ud.pair_arm_draw(mu_row=mu_row,
-                      mu_col=mu_col,
-                      horizon=horizon,
-                      output_pickle=None,
-                      law='Bernoulli',
-                      plot=False)
+    ## Load draws in advance
+    pair_draw_pickle = f'pair_row-{nb_row}_col-{nb_col}_horizon-{horizon}.p'
+    with open(os.path.join(draws_dir, pair_draw_pickle), 'rb') as f:
+        draws_dict = p.load(f)
     draws_in_advance = draws_dict["draws_in_advance"]
 
 
-    ## Create Environment
-    print("Create environment")
-    my_rank1_env = r1e.create_rank1env(mu_row, mu_col, draws_in_advance)
-    print("mu matrix", my_rank1_env.mu_matrix)
 
-    ## Launch game
-    my_policy = OSUB.OSUB(draw_leader_every=5)
-    osub_game = ug.UnimodalGame(environment=my_rank1_env,
-                                policy=my_policy,
-                                draws_in_advance=draws_in_advance,
-                                horizon=horizon)
-    #
-    # my_policy = OSUB.OSUB(draw_leader_every=5)
-    # osub_game = ug.UnimodalGame(environment=my_rank1_env,
-    #                             policy=my_policy,
-    #                             draws_in_advance=draws_in_advance)
-    #
-    # osub_game.playGame()
+    list_draw_leader_every = [3,5]
+    regrets_OSUB = []
+    regrets_UTS = []
+    for draw_leader_every in list_draw_leader_every:
+        output_dir = os.path.join(results_dir, f'draw_leader_every_{draw_leader_every}')
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        ## OSUB
+        OSUB_rank1_env = r1e.create_rank1env(draws_dict)
+        OSUB_policy = OSUB.OSUB(draw_leader_every=draw_leader_every)
+        osub_game = ug.UnimodalGame(environment=OSUB_rank1_env,
+                                    policy=OSUB_policy,
+                                    horizon=horizon)
+        osub_game.playGame()
+        osub_game.plot_and_save(output_dir=output_dir,
+                                show_regret=True,
+                                show_arm=True,
+                                show_mu_hat=True,
+                                show_leader=True,
+                                save_game=True)
+        regrets_OSUB.append(osub_game.regret_history)
+
+        ## UTS
+        UTS_rank1_env = r1e.create_rank1env(draws_dict)
+        UTS_policy = UTS.UTS(draw_leader_every=draw_leader_every)
+        UTS_game = ug.UnimodalGame(environment=UTS_rank1_env,
+                                    policy=UTS_policy,
+                                    horizon=horizon)
+        UTS_game.playGame()
+        UTS_game.plot_and_save(output_dir=output_dir,
+                                show_regret=True,
+                                show_arm=True,
+                                show_mu_hat=True,
+                                show_leader=True,
+                                save_game=True)
+        regrets_UTS.append(UTS_game.regret_history)
+
+
+    plt.figure(figsize=(10,10))
+    

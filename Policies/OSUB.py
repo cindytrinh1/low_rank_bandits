@@ -10,6 +10,7 @@ class OSUB(Policy):
 	def __init__(self, draw_leader_every):
 		self.draw_leader_every = draw_leader_every
 		self.isUnimodalPolicy = True
+		self.name = "OSUB"
 
 	def playArm(self,
 				env,
@@ -24,7 +25,7 @@ class OSUB(Policy):
 		else:
 			list_arm_mu_hat = [(arm, arm.mu_hat) for arm in env.list_of_arms]
 			leader_t = tools.best_arm(list_arm_mu_hat)
-			
+			print(f"Time {t}, leader is {leader_t.idx}, {leader_t.idx_pair}")
 
 			if leader_t.nb_times_drawn%self.draw_leader_every == 0:
 				arm_t = leader_t
@@ -35,8 +36,10 @@ class OSUB(Policy):
 
 				UCB_neighbors_idx = []
 				for cur_neighbor_arm in leader_t.neighbors:
-					UCB_neighbors_idx.append((cur_neighbor_arm, self.UCB1_idx(cur_neighbor_arm, t)))
+					print("klucb",self.UCB1_idx(cur_neighbor_arm, t), "arm ", cur_neighbor_arm.idx)
+					UCB_neighbors_idx.append((cur_neighbor_arm, self.KLUCB_idx(cur_neighbor_arm, t)))
 				arm_t = tools.best_arm(UCB_neighbors_idx)
+
 
 
 		reward_t = arm_t.draw(t)
@@ -48,3 +51,10 @@ class OSUB(Policy):
 				  arm,
 				  t):
 		return arm.mu_hat + np.sqrt((2*np.log(t))/arm.nb_times_drawn)
+
+	def KLUCB_idx(self, arm, t):
+		lb = arm.mu_hat# arm.mu_hat
+		ub = 1
+		c = 3 # a changer ?
+		d = (np.log(t) + c*np.log(np.log(t)))/ arm.nb_times_drawn
+		return tools.klucb(lb, d, tools.klBern, ub)

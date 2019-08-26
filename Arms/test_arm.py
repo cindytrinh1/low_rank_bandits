@@ -4,8 +4,7 @@ import pickle as p
 
 class TestArm(unittest.TestCase):
     def test_idx_arm(self):
-        mu = [0.1, 0.2, 0.3]
-        my_arm = Arm.Arm(mu=mu)
+        my_arm = Arm.Arm(mu=0)
         my_arm.set_idx(3)
         self.assertEqual(my_arm.idx,3)
 
@@ -29,7 +28,7 @@ class TestArm(unittest.TestCase):
     def test_draw_advance(self):
         with open('../test_folder/single_draw_1000.p', 'rb') as f:
             draws_dict = p.load(f)
-        my_arm = Arm.Arm(mu=None,
+        my_arm = Arm.Arm(mu=0,
                          draws_in_advance=draws_dict['draws_in_advance'][0])
         my_arm.idx = 0
         cur_t = 0
@@ -42,7 +41,7 @@ class TestArm(unittest.TestCase):
         idx = 0
         with open('../test_folder/pair_draw_1000.p', 'rb') as f:
             draws_dict = p.load(f)
-        my_arm = Arm.PairArm(mu=None,
+        my_arm = Arm.PairArm(mu=0,
                              draws_in_advance=draws_dict['draws_in_advance'])
         my_arm.set_idx_pair(idx_pair)
         my_arm.draw(0)

@@ -8,14 +8,14 @@ from Arms.Arm import PairArm
 
 class TestEnvironment(unittest.TestCase):
     def test_create_r1env_advance(self):
-        mu_row = np.linspace(0.1, 0.5, 5)
-        mu_col = np.linspace(0.1, 0.3, 3)
-        nb_row = len(mu_row)
-        nb_col = len(mu_col)
+
         with open('../test_folder/pair_draw_1000.p', 'rb') as f:
             draws_dict = p.load(f)
-        draws_in_advance = draws_dict['draws_in_advance']
-        my_rank1_env = r1e.create_rank1env(mu_row, mu_col, draws_in_advance)
+        mu_row = draws_dict["mu_row"]
+        mu_col = draws_dict["mu_col"]
+        nb_row = len(mu_row)
+        nb_col = len(mu_col)
+        my_rank1_env = r1e.create_rank1env(draws_dict)
         self.assertEqual(my_rank1_env.nb_arms, nb_row*nb_col)
         self.assertTrue((my_rank1_env.mu_row == mu_row).all())
         self.assertTrue((my_rank1_env.mu_col == mu_col).all())
@@ -38,14 +38,13 @@ class TestEnvironment(unittest.TestCase):
         self.assertTrue(my_rank1_env.opt_arm.mu == mu_row[-1]*mu_col[-1])
 
     def test_get_arm_idx(self):
-        mu_row = np.linspace(0.1, 0.5, 5)
-        mu_col = np.linspace(0.1, 0.3, 3)
-        nb_row = len(mu_row)
-        nb_col = len(mu_col)
         with open('../test_folder/pair_draw_1000.p', 'rb') as f:
             draws_dict = p.load(f)
-        draws_in_advance = draws_dict['draws_in_advance']
-        my_rank1_env = r1e.create_rank1env(mu_row, mu_col, draws_in_advance)
+        mu_row = draws_dict["mu_row"]
+        mu_col = draws_dict["mu_col"]
+        nb_row = len(mu_row)
+        nb_col = len(mu_col)
+        my_rank1_env = r1e.create_rank1env(draws_dict)
 
         idx_0 = (0, 0)
         arm_0 = my_rank1_env.get_arm_idx(idx_0)
@@ -76,14 +75,13 @@ class TestEnvironment(unittest.TestCase):
 
 
     def test_set_neighbors(self):
-        mu_row = np.linspace(0.1, 0.5, 5)
-        mu_col = np.linspace(0.1, 0.3, 3)
-        nb_row = len(mu_row)
-        nb_col = len(mu_col)
         with open('../test_folder/pair_draw_1000.p', 'rb') as f:
             draws_dict = p.load(f)
-        draws_in_advance = draws_dict['draws_in_advance']
-        my_rank1_env = r1e.create_rank1env(mu_row, mu_col, draws_in_advance)
+        mu_row = draws_dict["mu_row"]
+        mu_col = draws_dict["mu_col"]
+        nb_row = len(mu_row)
+        nb_col = len(mu_col)
+        my_rank1_env = r1e.create_rank1env(draws_dict)
 
 
         idx_0 = (0, 0)

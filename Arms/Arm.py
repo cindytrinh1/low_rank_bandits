@@ -9,13 +9,13 @@ class Arm:
         self.law = law
         self.draws_in_advance = draws_in_advance
         self.mu_hat = 0
+        self.cumreward = 0
         self.mu_hat_history = []
         self.nb_times_drawn = 0
         self.neighbors = None
         assert 0 <= self.mu <= 1
 
     def draw(self, t):
-
         if self.draws_in_advance is not None:
             assert t < self.draws_in_advance.shape[0]
             reward = self.draws_in_advance[t]
@@ -30,10 +30,12 @@ class Arm:
                 self.mu_hat_history.append(self.mu_hat_history[-1])
             else:
                 self.mu_hat_history.append(None)
+
         self.mu_hat_history.append(self.mu_hat)
         self.nb_times_drawn += 1
+        self.cumreward += reward
+        assert len(self.mu_hat_history) == t + 1, f'arm {self.idx}, t={t}, mu_hat_history length = {len(self.mu_hat_history)}'
 
-        assert len(self.mu_hat_history) == t + 1
         print(f"Draw arm of idx {self.idx}, mu_hat {self.mu_hat}, mu {self.mu}, reward {reward}")
         return reward
 

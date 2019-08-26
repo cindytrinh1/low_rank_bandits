@@ -1,26 +1,53 @@
 import numpy as np
+import sys
+sys.path.append("../")
+import numpy as np
+from Policies.Policy import Policy
+from tools import tools
 
 class UCB(Policy):
+	def __init__(self):
+		self.name = "UCB"
 
-    def playArm(env,
-                mu_hat_history,
-                t):
-        nb_arms = env.nb_arms
+	def playArm(self,
+				env,
+				t):
+		nb_arms = env.nb_arms
 
-        if t <= nb_arms:
-            arm_t = env.get_arm_idx(t)
-        else:
-        	UCB_indexes = []
-        	for cur_arm in env.list_of_arms:
-        		UCB_indexes.append((cur_arm,
-        							UCB1_idx(cur_arm, t)))
-        	arm_t = tools.best_arm(UCB_indexes)
-        reward_t = arm_t.draw(t)
-        
-        return arm_t, reward_t
-        	
-       
-    def UCB1_idx(self,
-    			  arm,
-    			  t):
-    	return arm.mu_hat + np.sqrt((2*np.log(t))/arm.nb_times_drawn)
+		if t < nb_arms:
+			arm_t = env.get_arm_idx(t)
+		else:
+			list_arm_UCB = [(arm, self.UCB_idx(arm)) for arm in env.list_of_arms]
+			arm_t = tools.best_arm(list_arm_UCB)
+
+		reward_t = arm_t.draw(t)
+
+		return arm_t, reward_t, leader_t
+
+
+	def UCB_idx(self,
+				  arm,
+				  t):
+		return arm.mu_hat + np.sqrt((2*np.log(t))/arm.nb_times_drawn)
+
+class UCB1(UCB):
+	def __init__(self):
+		self.name = "UCB1"
+
+	def UCB_idx(self,
+				  arm,
+				  t):
+		return arm.mu_hat + np.sqrt((2*np.log(t))/arm.nb_times_drawn)
+
+class KLUCB(UCB):
+	def __init__(self):
+		self.name = "KL-UCB"
+
+	def UCB_idx(self,
+				  arm,
+				  t):
+        lb = -5 #arm.mu_hat
+        ub = 5
+        c = 0 # a changer ?
+        d = np.log(t) + c*np.log(np.log(t))) / arm.nb_times_drawn
+		return tools.klucb(lb, d, tools.klBern, ub)

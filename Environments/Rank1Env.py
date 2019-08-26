@@ -7,10 +7,13 @@ from Environments.UnimodalEnvironment import UnimodalEnvironment
 
 
 
-def create_rank1env(mu_row, mu_col, draws_in_advance):
+def create_rank1env(draws_dict):
     """
     draws_in_advance = list of nb_arms lists of length horizon
     """
+    draws_in_advance = draws_dict["draws_in_advance"]
+    mu_row =  draws_dict["mu_row"]
+    mu_col =  draws_dict["mu_col"]
     nb_row = len(mu_row)
     nb_col = len(mu_col)
 
